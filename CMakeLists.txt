@@ -185,3 +185,10 @@ if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
     ADD_SUBDIRECTORY(testsuite/w2dyn.tests)
     enable_testing()
 endif()
+
+# -- Installation
+if((NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT) AND (IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX}))
+  set(PYTHON_INSTALL_ROOT lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
+  message(STATUS "Installation directory will be ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_ROOT}")
+  install(DIRECTORY w2dyn DESTINATION ${PYTHON_INSTALL_ROOT} FILES_MATCHING PATTERN "*.py" PATTERN "*.so" PATTERN "configspec")
+endif()
