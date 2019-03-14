@@ -171,7 +171,7 @@ ADD_CUSTOM_TARGET(distclean
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/distclean.cmake
 )
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
     ADD_SUBDIRECTORY(testsuite/mtrng.tests)
     ADD_SUBDIRECTORY(testsuite/maxent.tests)
     ADD_SUBDIRECTORY(testsuite/ctqmc.tests)
