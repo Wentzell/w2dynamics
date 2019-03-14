@@ -178,8 +178,10 @@ ADD_CUSTOM_TARGET(distclean
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/distclean.cmake
 )
 
-ADD_SUBDIRECTORY(testsuite/mtrng.tests)
-ADD_SUBDIRECTORY(testsuite/maxent.tests)
-ADD_SUBDIRECTORY(testsuite/ctqmc.tests)
-ADD_SUBDIRECTORY(testsuite/w2dyn.tests)
-enable_testing()
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    ADD_SUBDIRECTORY(testsuite/mtrng.tests)
+    ADD_SUBDIRECTORY(testsuite/maxent.tests)
+    ADD_SUBDIRECTORY(testsuite/ctqmc.tests)
+    ADD_SUBDIRECTORY(testsuite/w2dyn.tests)
+    enable_testing()
+endif()
