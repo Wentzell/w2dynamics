@@ -101,7 +101,7 @@ ENDIF()
 
 find_package(
   Python
-  COMPONENTS Interpreter Development.Module NumPy
+  COMPONENTS Interpreter Development NumPy
   REQUIRED)
 
 # F2PY headers
