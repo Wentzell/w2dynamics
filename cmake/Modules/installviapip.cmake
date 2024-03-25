@@ -1,10 +1,10 @@
-if(NOT PYTHONINTERP_FOUND)
-        find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+        find_package(Python REQUIRED)
 endif()
 
 FUNCTION(INSTALL_VIA_PIP module RESULT_NAME)
 #check for pip. The pip installer needs the python-xml module.
-execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip freeze OUTPUT_VARIABLE PYTHON_PACKAGE_LIST)
+execute_process(COMMAND ${Python_EXECUTABLE} -m pip freeze OUTPUT_VARIABLE PYTHON_PACKAGE_LIST)
     if ("${PYTHON_PACKAGE_LIST}" STREQUAL "")
         execute_process(COMMAND pip freeze OUTPUT_VARIABLE PYTHON_PACKAGE_LIST)
         if ("${PYTHON_PACKAGE_LIST}" STREQUAL "")
@@ -15,7 +15,7 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip freeze OUTPUT_VARIABLE PYTHO
                 message(WARNING "CMake was not able to download pip. Trying with a direct call to curl")
                 execute_process(COMMAND curl -k https://bootstrap.pypa.io/get-pip.py -o get-pip.py RESULT_VARIABLE result)
             endif()
-            execute_process(COMMAND ${PYTHON_EXECUTABLE} ./get-pip.py --user RESULT_VARIABLE RES)
+            execute_process(COMMAND ${Python_EXECUTABLE} ./get-pip.py --user RESULT_VARIABLE RES)
 #            message(${RES})
             if(${RES})#FIXME: Check wether this works for other versions...
                 message(WARNING "Not able to successfully execute Pip. assuming this is due to an old version of Python.")
@@ -37,7 +37,7 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip freeze OUTPUT_VARIABLE PYTHO
 
 message(STATUS "Installing ${module}")
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip "install" "--user" ${module} RESULT_VARIABLE SUCCESS)
+execute_process(COMMAND ${Python_EXECUTABLE} -m pip "install" "--user" ${module} RESULT_VARIABLE SUCCESS)
 if (NOT "${SUCCESS}" STREQUAL "0")
   execute_process(COMMAND pip "install" "--user" ${module} RESULT_VARIABLE SUCCESS)
   if (NOT "${SUCCESS}" STREQUAL "0")

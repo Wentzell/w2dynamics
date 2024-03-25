@@ -52,15 +52,6 @@ SET( CMAKE_Fortran_FLAGS             "${CMAKE_Fortran_FLAGS} -DLAPACK77_Interfac
 # Define the actual files and folders that make up the build
 ############################################################
 
-find_package(PythonInterp 3.0)
-if (NOT PYTHONINTERP_FOUND)
-  find_package(PythonInterp 2.6)
-endif()
-find_package(PackageHandleStandardArgs)
-
-
-INCLUDE(${CMAKE_MODULE_PATH}/installviapip.cmake)
-
 option(USE_NFFT "Compile with support for routines requiring the NFFT library for non-equispaced FFTs" ON)
 
 if (USE_NFFT)
@@ -91,14 +82,6 @@ else ()
   set(NFFT_LIBRARIES "")
 endif ()
 
-find_package(NUMPY 1.10)
-IF(NOT NUMPY_FOUND)
-    install_via_pip("numpy>=1.10.0" ERRORCODE)
-    if (${ERRORCODE})
-    MESSAGE(FATAL_ERROR "Couldn't install numpy -> ABORTING!!!")
-    endif()
-ENDIF()
-
 find_package(
   Python
   COMPONENTS Interpreter Development NumPy
@@ -106,7 +89,7 @@ find_package(
 
 # F2PY headers
 execute_process(
-  COMMAND "${PYTHON_EXECUTABLE}" -c
+  COMMAND "${Python_EXECUTABLE}" -c
           "import numpy.f2py; print(numpy.f2py.get_include())"
   RESULT_VARIABLE GET_INCLUDE_FAILED
   OUTPUT_VARIABLE F2PY_INCLUDE_DIR
@@ -124,42 +107,11 @@ target_link_libraries(fortranobject PUBLIC Python::NumPy)
 target_include_directories(fortranobject PUBLIC "${F2PY_INCLUDE_DIR}")
 set_property(TARGET fortranobject PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-find_package(H5PY)
-find_package(MPI4PY)
-find_package(SCIPY 0.10)
-IF(NOT SCIPY_FOUND)
-    install_via_pip("scipy" ERRORCODE)
-    if (${ERRORCODE})
-    MESSAGE(FATAL_ERROR "Couldn't install scipy -> ABORTING!!!")
-    endif()
-ENDIF()
-find_package(CONFIGOBJ)
-if(NOT H5PY_FOUND)
-    install_via_pip("h5py" ERRORCODE)
-    if (${ERRORCODE})
-    MESSAGE(FATAL_ERROR "Couldn't install H5PY -> ABORTING!!!")
-    endif()
-endif()
-if(NUMPY_VERSION VERSION_GREATER "1.17.99" AND SCIPY_VERSION VERSION_LESS "1.0.0")
-    # automatic installation of h5py via pip can also pull in quite
-    # new versions of numpy as dependencies...
-    install_via_pip("scipy>=1.0.0" ERRORCODE)
-    if (${ERRORCODE})
-      message(WARNING "Your versions of numpy and scipy are incompatible and updating scipy automatically failed. You will not be able to run w2dynamics before updating scipy.")
-    endif()
-endif()
-if(NOT MPI4PY_FOUND AND MPI_Fortran_FOUND)
-    install_via_pip("mpi4py" ERRORCODE)
-    if (${ERRORCODE})
-    MESSAGE(FATAL_ERROR "Couldn't install MPI4PY -> ABORTING!!!")
-    endif()
-endif()
-if(NOT CONFIGOBJ_FOUND)
-    install_via_pip("configobj" ERRORCODE)
-    if (${ERRORCODE})
-    MESSAGE(FATAL_ERROR "Couldn't install configobj(required for DMFT.py) -> ABORTING!!!")
-    endif()
-endif()
+find_package(H5PY REQUIRED)
+find_package(HDF5 1.6 COMPONENTS Fortran)# enforce the availability of the Fortran bindings. FIXME: Test on a suitable computer
+find_package(MPI4PY REQUIRED)
+find_package(SCIPY 0.10 REQUIRED)
+find_package(CONFIGOBJ REQUIRED)
 
 # Define the executable name
 SET(CTQMCEXE ctqmc)
@@ -200,7 +152,7 @@ enable_testing()
 message(STATUS "Configuration for installation (optional):")
 
 # default / fallback paths relative to CMAKE_INSTALL_PREFIX
-set(INSTALL_PATH_SITE_PACKAGES "lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+set(INSTALL_PATH_SITE_PACKAGES "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
 set(INSTALL_PATH_SCRIPTS "bin")
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -246,7 +198,7 @@ option(INSTALL_EXECUTABLES "Install executable scripts DMFT.py, cthyb, Maxent.py
 message(STATUS "Installing executable scripts DMFT.py, cthyb, Maxent.py, hgrep (option INSTALL_EXECUTABLES): ${INSTALL_EXECUTABLES}")
 
 install(DIRECTORY w2dyn
-  DESTINATION "${INSTALL_PATH_SITE_PACKAGES}"
+  DESTINATION ${INSTALL_PATH_SITE_PACKAGES}
   COMPONENT Python_Package)
 if(INSTALL_EXECUTABLES)
   set(SCRIPT_FILES DMFT.py cthyb hgrep Maxent.py)

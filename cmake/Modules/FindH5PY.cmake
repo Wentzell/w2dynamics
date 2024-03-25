@@ -11,13 +11,13 @@
 
 # Finding H5Py involves calling the Python interpreter
 #Check wether we have already searched the Python interpreter
-if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
 endif()
 
-if(NOT H5PY_FOUND AND PYTHONINTERP_FOUND)
+if(NOT H5PY_FOUND AND Python_FOUND)
     execute_process(COMMAND
-      "${PYTHON_EXECUTABLE}" "-c" "exec(\"try:\\n import h5py;\\n print(h5py.version.version);\\nexcept:\\n exit(1)\")"
+      "${Python_EXECUTABLE}" "-c" "exec(\"try:\\n import h5py;\\n print(h5py.version.version);\\nexcept:\\n exit(1)\")"
       OUTPUT_VARIABLE _H5PY_VALUES
       RESULT_VARIABLE H5PY_COMMAND_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -44,7 +44,7 @@ if(NOT H5PY_FOUND AND PYTHONINTERP_FOUND)
             "(${H5PY_VERSION_MAJOR} * 10000) + (${H5PY_VERSION_MINOR} * 100) + ${H5PY_VERSION_PATCH}")
         
     endif(H5PY_COMMAND_RESULT MATCHES 0)
-endif(NOT H5PY_FOUND AND PYTHONINTERP_FOUND)
+endif(NOT H5PY_FOUND AND Python_FOUND)
 
 find_package_handle_standard_args(  H5PY
                                     REQUIRED_VARS H5PY_VERSION

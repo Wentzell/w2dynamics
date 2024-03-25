@@ -10,17 +10,17 @@
 
 # Finding ConfigObj involves calling the Python interpreter
 #Check wether we have already searched the Python interpreter
-if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
 endif()
 
   execute_process(COMMAND
-      "${PYTHON_EXECUTABLE}" "-c" "exec(\"try:\\n import configobj;\\n print(configobj.__version__);\\nexcept:\\n exit(1)\")"
+      "${Python_EXECUTABLE}" "-c" "exec(\"try:\\n import configobj;\\n print(configobj.__version__);\\nexcept:\\n exit(1)\")"
       OUTPUT_VARIABLE CONFIGOBJ_VERSION
       RESULT_VARIABLE CONFIGOBJ_COMMAND_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-if(NOT CONFIGOBJ_FOUND AND PYTHONINTERP_FOUND)
+if(NOT CONFIGOBJ_FOUND AND Python_FOUND)
 #    if(NOT CONFIGOBJ_COMMAND_RESULT MATCHES 0)
 #        message("ConfigObj import failure:\n${_H5PY_ERROR_VALUE}")
 #    endif()
@@ -35,7 +35,7 @@ if(NOT CONFIGOBJ_FOUND AND PYTHONINTERP_FOUND)
         math(EXPR CONFIGOBJ_VERSION_DECIMAL
             "(${CONFIGOBJ_VERSION_MAJOR} * 10000) + (${CONFIGOBJ_VERSION_MINOR} * 100) + ${CONFIGOBJ_VERSION_PATCH}")
     endif(CONFIGOBJ_COMMAND_RESULT MATCHES 0)
-endif(NOT CONFIGOBJ_FOUND AND PYTHONINTERP_FOUND)
+endif(NOT CONFIGOBJ_FOUND AND Python_FOUND)
 
 find_package_handle_standard_args(  CONFIGOBJ
                                     REQUIRED_VARS CONFIGOBJ_VERSION

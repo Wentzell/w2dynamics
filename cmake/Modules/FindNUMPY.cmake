@@ -12,13 +12,13 @@
 
 # Finding NumPy involves calling the Python interpreter
 #Check wether we have already searched the Python interpreter
-if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
 endif()
 
-if(NOT NUMPY_FOUND AND PYTHONINTERP_FOUND)
+if(NOT NUMPY_FOUND AND Python_FOUND)
     execute_process(COMMAND
-      "${PYTHON_EXECUTABLE}" "-c" "exec(\"try:\\n import numpy;\\n print(numpy.__version__);\\n print(numpy.get_include())\\nexcept:\\n exit(1)\")"
+      "${Python_EXECUTABLE}" "-c" "exec(\"try:\\n import numpy;\\n print(numpy.__version__);\\n print(numpy.get_include())\\nexcept:\\n exit(1)\")"
       OUTPUT_VARIABLE _NUMPY_VALUES
       RESULT_VARIABLE NUMPY_COMMAND_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -43,7 +43,7 @@ if(NOT NUMPY_FOUND AND PYTHONINTERP_FOUND)
             "(${NUMPY_VERSION_MAJOR} * 10000) + (${NUMPY_VERSION_MINOR} * 100) + ${NUMPY_VERSION_PATCH}")
         
     endif(NUMPY_COMMAND_RESULT MATCHES 0)
-endif(NOT NUMPY_FOUND AND PYTHONINTERP_FOUND)
+endif(NOT NUMPY_FOUND AND Python_FOUND)
 
 find_package_handle_standard_args(  NUMPY
                                     REQUIRED_VARS NUMPY_INCLUDE_DIRS

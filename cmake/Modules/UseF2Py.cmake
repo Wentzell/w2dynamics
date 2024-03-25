@@ -19,10 +19,10 @@
 # |   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 |
 # +-----------------------------------------------------------------------------+
 
-find_package(PythonInterp REQUIRED)
+find_package(Python REQUIRED)
 
 if (NOT F2PY_SUFFIX)
-  execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX') or sysconfig.get_config_var('SO'))"
+  execute_process(COMMAND "${Python_EXECUTABLE}" -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX') or sysconfig.get_config_var('SO'))"
                   OUTPUT_VARIABLE PYTHON_EXT_SUFFIX
                   RESULT_VARIABLE FOUND_PYTHON_EXT_SUFFIX)
   if (NOT ${FOUND_PYTHON_EXT_SUFFIX} EQUAL 0)
@@ -98,7 +98,7 @@ macro (add_f2py_module _name)
   # output will be a shared library that can be imported by python.
   if ( "${_srcs}" MATCHES "^[^;]*\\.pyf;" )
     add_custom_command(OUTPUT "${_name}${F2PY_SUFFIX}"
-      COMMAND ${PYTHON_EXECUTABLE} -m numpy.f2py --quiet -m ${_name}
+      COMMAND ${Python_EXECUTABLE} -m numpy.f2py --quiet -m ${_name}
               --build-dir "${CMAKE_CURRENT_BINARY_DIR}/f2py-${_name}"
               ${_fcompiler_opts} ${_inc_opts} -c ${_abs_srcs}
       DEPENDS ${_srcs}
@@ -106,10 +106,10 @@ macro (add_f2py_module _name)
 
   else ( "${_srcs}" MATCHES "^[^;]*\\.pyf;" )
     add_custom_command(OUTPUT "${_name}${F2PY_SUFFIX}"
-      COMMAND ${PYTHON_EXECUTABLE} -m numpy.f2py --quiet -m ${_name} -h ${_name}.pyf
+      COMMAND ${Python_EXECUTABLE} -m numpy.f2py --quiet -m ${_name} -h ${_name}.pyf
               --build-dir "${CMAKE_CURRENT_BINARY_DIR}/f2py-${_name}"
               --include-paths ${_inc_paths} --overwrite-signature ${_abs_srcs}
-      COMMAND ${PYTHON_EXECUTABLE} -m numpy.f2py --quiet -m ${_name} -c "${CMAKE_CURRENT_BINARY_DIR}/f2py-${_name}/${_name}.pyf"
+      COMMAND ${Python_EXECUTABLE} -m numpy.f2py --quiet -m ${_name} -c "${CMAKE_CURRENT_BINARY_DIR}/f2py-${_name}/${_name}.pyf"
               --build-dir "${CMAKE_CURRENT_BINARY_DIR}/f2py-${_name}"
               ${_fcompiler_opts} ${_inc_opts} ${_abs_srcs}
       DEPENDS ${_srcs}

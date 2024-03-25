@@ -11,13 +11,13 @@
 
 # Finding SciPy involves calling the Python interpreter
 #Check wether we have already searched the Python interpreter
-if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
 endif()
 
-if(NOT SCIPY_FOUND AND PYTHONINTERP_FOUND)
+if(NOT SCIPY_FOUND AND Python_FOUND)
     execute_process(COMMAND
-      "${PYTHON_EXECUTABLE}" "-c" "exec(\"try:\\n import numpy;\\n import scipy;\\n print(scipy.__version__);\\n print(numpy.get_include())\\nexcept:\\n exit(1)\")"
+      "${Python_EXECUTABLE}" "-c" "exec(\"try:\\n import numpy;\\n import scipy;\\n print(scipy.__version__);\\n print(numpy.get_include())\\nexcept:\\n exit(1)\")"
       OUTPUT_VARIABLE _SCIPY_VALUES
       RESULT_VARIABLE SCIPY_COMMAND_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -39,12 +39,11 @@ if(NOT SCIPY_FOUND AND PYTHONINTERP_FOUND)
         list(GET _SCIPY_VERSION_LIST 0 SCIPY_VERSION_MAJOR)
         list(GET _SCIPY_VERSION_LIST 1 SCIPY_VERSION_MINOR)
         list(GET _SCIPY_VERSION_LIST 2 SCIPY_VERSION_PATCH)
-        string(REGEX MATCH "[0-9]*" NUMPY_VERSION_PATCH ${NUMPY_VERSION_PATCH})
         math(EXPR SCIPY_VERSION_DECIMAL
             "(${SCIPY_VERSION_MAJOR} * 10000) + (${SCIPY_VERSION_MINOR} * 100) + ${SCIPY_VERSION_PATCH}")
         
     endif(SCIPY_COMMAND_RESULT MATCHES 0)
-endif(NOT SCIPY_FOUND AND PYTHONINTERP_FOUND)
+endif(NOT SCIPY_FOUND AND Python_FOUND)
 
 find_package_handle_standard_args(  SCIPY
                                     REQUIRED_VARS SCIPY_INCLUDE_DIRS

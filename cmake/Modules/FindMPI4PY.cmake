@@ -11,13 +11,13 @@
 
 # Finding mpi4Py involves calling the Python interpreter
 #Check wether we have already searched the Python interpreter
-if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp REQUIRED)
+if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
 endif()
 
-if(NOT MPI4PY_FOUND AND PYTHONINTERP_FOUND)
+if(NOT MPI4PY_FOUND AND Python_FOUND)
     execute_process(COMMAND
-      "${PYTHON_EXECUTABLE}" "-c" "exec(\"try:\\n import mpi4py;\\n print(mpi4py.__version__);\\n print(mpi4py.get_include())\\nexcept:\\n exit(1)\")"
+      "${Python_EXECUTABLE}" "-c" "exec(\"try:\\n import mpi4py;\\n print(mpi4py.__version__);\\n print(mpi4py.get_include())\\nexcept:\\n exit(1)\")"
       OUTPUT_VARIABLE _MPI4PY_VALUES
       RESULT_VARIABLE MPI4PY_COMMAND_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -44,7 +44,7 @@ if(NOT MPI4PY_FOUND AND PYTHONINTERP_FOUND)
             "(${MPI4PY_VERSION_MAJOR} * 10000) + (${MPI4PY_VERSION_MINOR} * 100)")
         
     endif(MPI4PY_COMMAND_RESULT MATCHES 0)
-endif(NOT MPI4PY_FOUND AND PYTHONINTERP_FOUND)
+endif(NOT MPI4PY_FOUND AND Python_FOUND)
 
 find_package_handle_standard_args(  MPI4PY
                                     REQUIRED_VARS MPI4PY_INCLUDE_DIRS
